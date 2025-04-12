@@ -73,10 +73,10 @@
     stream-replace-string "^2.0.0"
     zod "^3.23.8"
 
-"@astrojs/starlight@^0.32.1":
-  version "0.32.1"
-  resolved "https://registry.yarnpkg.com/@astrojs/starlight/-/starlight-0.32.1.tgz#97564257e18c64b980d4e1802c07b4530ff7cf23"
-  integrity sha512-+GPtDzi7wkbooHnMZqGjCoV0qwkYZAFSg3FhRm8jSXXSkLJcw4rgT6vnee/LuJhbVq9kvHVcevtgK8tTxy3Xeg==
+"@astrojs/starlight@^0.32.4":
+  version "0.32.6"
+  resolved "https://registry.yarnpkg.com/@astrojs/starlight/-/starlight-0.32.6.tgz#af6723cc3c46a5110076da88628dd340c7656efd"
+  integrity sha512-ASWGwNzq+0TmJ+GJFFxFFxx6Yra7BqIIMQbvOy/cweTHjqejB6mcaEWtS3Mag12LM7tXCES7v/fzmdPgjz8Yxw==
   dependencies:
     "@astrojs/mdx" "^4.0.5"
     "@astrojs/sitemap" "^3.2.1"
