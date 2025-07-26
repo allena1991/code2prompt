@@ -101,6 +101,8 @@ impl Code2PromptSession {
 
     /// Constructs a JSON object that merges the session data and your config’s path label.
     pub fn build_template_data(&self) -> serde_json::Value {
+        use crate::util::escape_metaprompt_characters;
+        
         let mut data = serde_json::json!({
             "absolute_code_path": label(&self.config.path),
             "source_tree": self.data.source_tree,
@@ -110,11 +112,50 @@ impl Code2PromptSession {
             "git_log_branch": self.data.git_log_branch
         });
 
+        // Apply character escaping for metaprompt format
+        if self.config.output_format == OutputFormat::Metaprompt {
+            // Escape the absolute_code_path
+            if let Some(path) = data.get("absolute_code_path").and_then(|v| v.as_str()) {
+                data["absolute_code_path"] = serde_json::Value::String(escape_metaprompt_characters(path));
+            }
+            
+            // Escape the source_tree
+            if let Some(tree) = data.get("source_tree").and_then(|v| v.as_str()) {
+                data["source_tree"] = serde_json::Value::String(escape_metaprompt_characters(tree));
+            }
+            
+            // Escape the git_diff
+            if let Some(diff) = data.get("git_diff").and_then(|v| v.as_str()) {
+                data["git_diff"] = serde_json::Value::String(escape_metaprompt_characters(diff));
+            }
+            
+            // Escape files content
+            if let Some(files) = data.get_mut("files").and_then(|v| v.as_array_mut()) {
+                for file in files {
+                    if let Some(file_obj) = file.as_object_mut() {
+                        // Escape the path
+                        if let Some(path) = file_obj.get("path").and_then(|v| v.as_str()) {
+                            file_obj.insert("path".to_string(), serde_json::Value::String(escape_metaprompt_characters(path)));
+                        }
+                        // Escape the code content
+                        if let Some(code) = file_obj.get("code").and_then(|v| v.as_str()) {
+                            file_obj.insert("code".to_string(), serde_json::Value::String(escape_metaprompt_characters(code)));
+                        }
+                    }
+                }
+            }
+        }
+
         // Add user-defined variables to the template data
         if self.config.user_variables.len() > 0 {
             if let Some(obj) = data.as_object_mut() {
                 for (key, value) in &self.config.user_variables {
-                    obj.insert(key.clone(), serde_json::Value::String(value.clone()));
+                    let escaped_value = if self.config.output_format == OutputFormat::Metaprompt {
+                        escape_metaprompt_characters(value)
+                    } else {
+                        value.clone()
+                    };
+                    obj.insert(key.clone(), serde_json::Value::String(escaped_value));
                 }
             }
         }
@@ -135,10 +176,12 @@ impl Code2PromptSession {
                     include_str!("./default_template_md.hbs").to_string()
                 }
                 OutputFormat::Xml => include_str!("./default_template_xml.hbs").to_string(),
+                OutputFormat::Metaprompt => include_str!("./default_template_metaprompt.hbs").to_string(),
             };
             template_name = match self.config.output_format {
                 OutputFormat::Markdown | OutputFormat::Json => "markdown".to_string(),
                 OutputFormat::Xml => "xml".to_string(),
+                OutputFormat::Metaprompt => "metaprompt".to_string(),
             };
         }
 

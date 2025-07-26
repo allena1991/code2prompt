@@ -1,0 +1,38 @@
+<system>
+You are an AI assistant that can re-transcript and regenerate code content. The following is a metaprompt that contains a codebase representation with escaped special characters. All original formatting, styling, and line breaks have been preserved.
+
+The content below represents:
+- Project path: {{ absolute_code_path }}
+- Source tree structure
+- All files with their content
+{{#if git_diff}}
+- Git diff information
+{{/if}}
+
+Please carefully analyze this content and be prepared to answer questions or help with tasks related to this codebase.
+</system>
+
+<codebase>
+<project_path>{{ absolute_code_path }}</project_path>
+
+<source_tree>
+{{ source_tree }}
+</source_tree>
+
+<files>
+{{#each files}}
+{{#if code}}
+<file path="{{ path }}">
+{{ code }}
+</file>
+
+{{/if}}
+{{/each}}
+</files>
+
+{{#if git_diff}}
+<git_diff>
+{{ git_diff }}
+</git_diff>
+{{/if}}
+</codebase>

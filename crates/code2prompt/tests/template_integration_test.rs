@@ -125,6 +125,33 @@ mod template_tests {
         assert!(contains("Hello, world!").eval(&output));
     }
 
+    #[test]
+    fn test_metaprompt_template() {
+        let env = TestEnv::new();
+        let mut cmd = env.command();
+        cmd.arg("--output-format=metaprompt").assert().success();
+
+        let output = env.read_output();
+        debug!("Metaprompt template output:\n{}", output);
+
+        // Check metaprompt-specific formatting
+        assert!(contains("<system>").eval(&output));
+        assert!(contains("</system>").eval(&output));
+        assert!(contains("<codebase>").eval(&output));
+        assert!(contains("</codebase>").eval(&output));
+        assert!(contains("<project_path>").eval(&output));
+        assert!(contains("<source_tree>").eval(&output));
+        assert!(contains("<files>").eval(&output));
+        assert!(contains("<file path=").eval(&output));
+        
+        // Check that special characters are escaped
+        assert!(contains("fn main[OPEN_PAREN][CLOSE_PAREN]").eval(&output));
+        assert!(contains("[DOUBLE_QUOTE]Hello, world![DOUBLE_QUOTE]").eval(&output));
+        
+        // Verify no markdown code blocks
+        assert!(!contains("```").eval(&output));
+    }
+
     //     #[test]
     //     fn test_custom_template_with_variables() {
     //         let env = TestEnv::new();

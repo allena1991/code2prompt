@@ -31,7 +31,7 @@ pub struct Cli {
     #[clap(short = 'O', long = "output-file")]
     pub output_file: Option<String>,
 
-    /// Output format: markdown, json, or xml
+    /// Output format: markdown, json, xml, or metaprompt
     #[clap(short = 'F', long = "output-format", default_value = "markdown")]
     pub output_format: OutputFormat,
 
