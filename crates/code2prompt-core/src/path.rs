@@ -95,6 +95,7 @@ pub fn traverse_directory(config: &Code2PromptConfig) -> Result<(String, Vec<ser
                         path.extension().and_then(|ext| ext.to_str()).unwrap_or(""),
                         config.line_numbers,
                         config.no_codeblock,
+                        &config.output_format,
                     );
 
                     if !code.trim().is_empty() && !code.contains(char::REPLACEMENT_CHARACTER) {
@@ -186,7 +187,15 @@ pub fn label<P: AsRef<Path>>(p: P) -> String {
 /// # Returns
 ///
 /// * `String` - The wrapped code block.
-fn wrap_code_block(code: &str, extension: &str, line_numbers: bool, no_codeblock: bool) -> String {
+fn wrap_code_block(
+    code: &str, 
+    extension: &str, 
+    line_numbers: bool, 
+    no_codeblock: bool,
+    output_format: &crate::template::OutputFormat,
+) -> String {
+    use crate::template::OutputFormat;
+    
     let delimiter = "`".repeat(3);
     let mut code_with_line_numbers = String::new();
 
@@ -198,7 +207,8 @@ fn wrap_code_block(code: &str, extension: &str, line_numbers: bool, no_codeblock
         code_with_line_numbers = code.to_string();
     }
 
-    if no_codeblock {
+    // For metaprompt format, don't wrap in code blocks to avoid escaping issues
+    if matches!(output_format, OutputFormat::Metaprompt) || no_codeblock {
         code_with_line_numbers
     } else {
         format!(

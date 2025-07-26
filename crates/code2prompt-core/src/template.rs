@@ -98,6 +98,7 @@ pub enum OutputFormat {
     Markdown,
     Json,
     Xml,
+    Metaprompt,
 }
 
 impl FromStr for OutputFormat {
@@ -108,8 +109,9 @@ impl FromStr for OutputFormat {
             "markdown" | "md" => Ok(OutputFormat::Markdown),
             "json" => Ok(OutputFormat::Json),
             "xml" => Ok(OutputFormat::Xml),
+            "metaprompt" | "meta" => Ok(OutputFormat::Metaprompt),
             _ => Err(anyhow!(
-                "Invalid output format: {}. Allowed values: markdown, json, xml",
+                "Invalid output format: {}. Allowed values: markdown, json, xml, metaprompt",
                 s
             )),
         }
