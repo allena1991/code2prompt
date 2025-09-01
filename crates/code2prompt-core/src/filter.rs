@@ -53,10 +53,10 @@ pub fn build_globset(patterns: &[String]) -> GlobSet {
 ///
 /// * `path` - A relative path to the file that will be checked against the patterns.
 /// * `include_patterns` - A slice of glob pattern strings specifying which files to include.
-///                        If empty, all files are considered included unless excluded.
+///   If empty, all files are considered included unless excluded.
 /// * `exclude_patterns` - A slice of glob pattern strings specifying which files to exclude.
 /// * `include_priority` - A boolean flag that, when set to `true`, gives include patterns
-///                        precedence over exclude patterns in cases where both match.
+///   precedence over exclude patterns in cases where both match.
 ///
 /// # Returns
 ///

@@ -2,8 +2,9 @@
 use std::str::FromStr;
 use tiktoken_rs::{cl100k_base, o200k_base, p50k_base, p50k_edit, r50k_base};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub enum TokenFormat {
+    #[default]
     Raw,
     Format,
 }
@@ -23,16 +24,13 @@ impl FromStr for TokenFormat {
     }
 }
 
-impl Default for TokenFormat {
-    fn default() -> Self {
-        TokenFormat::Raw
-    }
-}
+
 
 /// Tokenizer types supported by tiktoken.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum TokenizerType {
     O200kBase,
+    #[default]
     Cl100kBase,
     P50kBase,
     P50kEdit,
@@ -72,11 +70,7 @@ impl FromStr for TokenizerType {
     }
 }
 
-impl Default for TokenizerType {
-    fn default() -> Self {
-        TokenizerType::Cl100kBase
-    }
-}
+
 
 /// Counts the tokens in the rendered text using the specified encoding and prints the result.
 ///
@@ -93,6 +87,5 @@ pub fn count_tokens(rendered: &str, tokenizer_type: &TokenizerType) -> usize {
         TokenizerType::R50kBase | TokenizerType::Gpt2 => r50k_base(),
     };
 
-    let token_count = bpe.unwrap().encode_with_special_tokens(rendered).len();
-    token_count
+    bpe.unwrap().encode_with_special_tokens(rendered).len()
 }

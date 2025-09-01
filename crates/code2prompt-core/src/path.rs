@@ -88,7 +88,7 @@ pub fn traverse_directory(config: &Code2PromptConfig) -> Result<(String, Vec<ser
             {
                 if let Ok(code_bytes) = fs::read(path) {
                     let clean_bytes = strip_utf8_bom(&code_bytes);
-                    let code = String::from_utf8_lossy(&clean_bytes);
+                    let code = String::from_utf8_lossy(clean_bytes);
 
                     let code_block = wrap_code_block(
                         &code,
@@ -121,9 +121,7 @@ pub fn traverse_directory(config: &Code2PromptConfig) -> Result<(String, Vec<ser
                             {
                                 let mod_time = fs::metadata(path)
                                     .and_then(|m| m.modified())
-                                    .and_then(|mtime| {
-                                        Ok(mtime.duration_since(std::time::SystemTime::UNIX_EPOCH))
-                                    })
+                                    .map(|mtime| mtime.duration_since(std::time::SystemTime::UNIX_EPOCH))
                                     .map(|d| d.unwrap().as_secs())
                                     .unwrap_or(0);
                                 file_entry.insert("mod_time".to_string(), json!(mod_time));
